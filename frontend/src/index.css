@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-ink-50: #f5f7fa;
+  --color-ink-100: #e9edf3;
+  --color-ink-200: #d3dae5;
+  --color-ink-300: #aab6c8;
+  --color-ink-400: #7a8aa3;
+  --color-ink-500: #566781;
+  --color-ink-600: #3f4e66;
+  --color-ink-700: #2d3a50;
+  --color-ink-800: #1c2638;
+  --color-ink-900: #111827;
+  --color-ink-950: #0a0f1a;
+
+  --color-brand-50: #fff8eb;
+  --color-brand-100: #ffecc6;
+  --color-brand-300: #ffc45c;
+  --color-brand-400: #ffb02e;
+  --color-brand-500: #f59200;
+  --color-brand-600: #d97100;
+  --color-brand-700: #b45309;
+
+  --color-paper: #fdfcf8;
+  --color-pen: #1e40af;
+
+  --color-off-duty: #64748b;
+  --color-sleeper: #6366f1;
+  --color-driving: #10b981;
+  --color-on-duty: #f59e0b;
+  --color-pickup: #0ea5e9;
+  --color-dropoff: #e11d48;
+  --color-fuel: #8b5cf6;
+  --color-restart: #0f766e;
+}
+
+@layer base {
+  html {
+    @apply bg-ink-50 text-ink-800 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    @apply bg-brand-300/60;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-ink-200/70 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_24px_-12px_rgba(16,24,40,0.12)];
+  }
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold tracking-wide text-ink-500 uppercase;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 shadow-xs transition outline-none placeholder:text-ink-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15;
+  }
+  .section-title {
+    @apply text-lg font-semibold tracking-tight text-ink-900;
+  }
+}
+
+/* Leaflet polish */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #eef1f5;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  box-shadow: 0 12px 32px -12px rgba(16, 24, 40, 0.35);
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+}
+
+@media print {
+  @page {
+    size: letter landscape;
+    margin: 0.4in;
+  }
+  body {
+    background: white !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-sheet {
+    break-after: page;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

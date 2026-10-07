@@ -1,0 +1,28 @@
+# Private / local-only material (recruiter email, original zip)
+.private/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/staticfiles/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+.claude/
