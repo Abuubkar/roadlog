@@ -1,22 +1,23 @@
 import { Flag, Gauge, Loader2, LocateFixed, Package, Play, SlidersHorizontal, Sparkles } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { defaultStartTime } from '../../lib/format'
 import type { LocationValue, LogDetails, TripRequest } from '../../types/trip'
 import { LocationInput } from './LocationInput'
 
 interface Props {
   loading: boolean
+  /** Start with the sample trip's inputs (matches the bundled sample plan). */
+  prefill: boolean
   onSubmit: (request: TripRequest) => void
+  onLoadSample: () => void
   details: LogDetails
   onDetailsChange: (details: LogDetails) => void
 }
 
 const empty: LocationValue = { text: '', place: null }
 
-/** `?sample` in the URL pre-fills and plans the sample trip (handy for demos). */
-const WANTS_SAMPLE = new URLSearchParams(window.location.search).has('sample')
-
 const SAMPLE = {
+  start: '2026-10-08T08:00',
   current: { text: 'Chicago, Illinois', place: { label: 'Chicago, Illinois', lat: 41.8756, lon: -87.6244 } },
   pickup: { text: 'Indianapolis, Indiana', place: { label: 'Indianapolis, Indiana', lat: 39.7683, lon: -86.1584 } },
   dropoff: { text: 'Los Angeles, California', place: { label: 'Los Angeles, California', lat: 34.0537, lon: -118.2428 } },
@@ -33,12 +34,12 @@ const DETAIL_FIELDS: { key: keyof LogDetails; label: string }[] = [
   { key: 'shipperCommodity', label: 'Shipper & commodity' },
 ]
 
-export function TripBar({ loading, onSubmit, details, onDetailsChange }: Props) {
-  const [current, setCurrent] = useState<LocationValue>(WANTS_SAMPLE ? SAMPLE.current : empty)
-  const [pickup, setPickup] = useState<LocationValue>(WANTS_SAMPLE ? SAMPLE.pickup : empty)
-  const [dropoff, setDropoff] = useState<LocationValue>(WANTS_SAMPLE ? SAMPLE.dropoff : empty)
-  const [cycleUsed, setCycleUsed] = useState(WANTS_SAMPLE ? '20' : '0')
-  const [startTime, setStartTime] = useState(defaultStartTime)
+export function TripBar({ loading, prefill, onSubmit, onLoadSample, details, onDetailsChange }: Props) {
+  const [current, setCurrent] = useState<LocationValue>(prefill ? SAMPLE.current : empty)
+  const [pickup, setPickup] = useState<LocationValue>(prefill ? SAMPLE.pickup : empty)
+  const [dropoff, setDropoff] = useState<LocationValue>(prefill ? SAMPLE.dropoff : empty)
+  const [cycleUsed, setCycleUsed] = useState(prefill ? '20' : '0')
+  const [startTime, setStartTime] = useState(prefill ? SAMPLE.start : defaultStartTime)
   const [inspections, setInspections] = useState(true)
   const [showOptions, setShowOptions] = useState(false)
 
@@ -59,17 +60,14 @@ export function TripBar({ loading, onSubmit, details, onDetailsChange }: Props) 
     onSubmit(request())
   }
 
-  useEffect(() => {
-    if (WANTS_SAMPLE) onSubmit(request())
-    // Run once on mount only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const loadSample = () => {
     setCurrent(SAMPLE.current)
     setPickup(SAMPLE.pickup)
     setDropoff(SAMPLE.dropoff)
     setCycleUsed('20')
+    setStartTime(SAMPLE.start)
+    setInspections(true)
+    onLoadSample()
   }
 
   return (

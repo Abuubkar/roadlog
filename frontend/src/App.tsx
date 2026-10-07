@@ -1,4 +1,4 @@
-import { AlertTriangle, Loader2 } from 'lucide-react'
+import { AlertTriangle, FlaskConical, Loader2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Directions } from './components/itinerary/Directions'
 import { StopsTable } from './components/itinerary/StopsTable'
@@ -35,10 +35,12 @@ const initialHour = (plan: TripPlan) => {
 }
 
 export default function App() {
-  const { plan, plannedAt, loading, error, submit, reset } = useTripPlan()
+  const { plan, isSample, plannedAt, loading, error, submit, reset, showSample } = useTripPlan()
   const [details, setDetails] = useStoredState('roadlog:log-details', DEFAULT_DETAILS)
   const [tab, setTab] = useState<Tab>('overview')
   const [scrub, setScrub] = useState<{ plan: TripPlan; hour: number } | null>(null)
+  // Bumped by "New trip" to remount the trip bar with empty inputs.
+  const [formKey, setFormKey] = useState(0)
 
   const hour = plan ? (scrub?.plan === plan ? scrub.hour : initialHour(plan)) : 0
   const locate = useMemo(() => (plan ? routeLocator(plan.route.geometry, plan.summary.total_miles) : null), [plan])
@@ -48,17 +50,38 @@ export default function App() {
 
   const newTrip = () => {
     reset()
+    setFormKey((k) => k + 1)
     setTab('overview')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
     <div className="lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
-      <Sidebar details={details} violations={plan ? 0 : null} />
+      <Sidebar details={details} tab={plan ? tab : 'overview'} hasPlan={Boolean(plan)} onTab={setTab} />
       <div className="min-w-0">
-        <PageHeader plan={plan} plannedAt={plannedAt} details={details} tab={plan ? tab : 'overview'} onTab={setTab} onNewTrip={newTrip} />
+        <PageHeader plan={plan} isSample={isSample} plannedAt={plannedAt} details={details} tab={plan ? tab : 'overview'} onTab={setTab} onNewTrip={newTrip} />
         <main className="flex flex-col gap-4 px-4 pt-5 pb-10 sm:px-7 print:p-0">
-          <TripBar loading={loading} onSubmit={(r) => submit(r).then(() => setTab('overview'))} details={details} onDetailsChange={setDetails} />
+          <TripBar
+            key={formKey}
+            prefill={formKey === 0}
+            loading={loading}
+            onSubmit={(r) => submit(r).then(() => setTab('overview'))}
+            onLoadSample={() => {
+              showSample()
+              setTab('overview')
+            }}
+            details={details}
+            onDetailsChange={setDetails}
+          />
+          {plan && isSample && (
+            <div className="flex items-start gap-2.5 rounded-[10px] border border-brand/20 bg-brand-soft px-4 py-2.5 text-brand-ink print:hidden">
+              <FlaskConical size={16} className="mt-px shrink-0" />
+              <span>
+                You're looking at a <b className="font-semibold">sample trip</b> (Chicago → Indianapolis → Los Angeles, 20 h of cycle used). Change the inputs
+                above and click <b className="font-semibold">Plan trip</b> to plan your own.
+              </span>
+            </div>
+          )}
           {error && (
             <div role="alert" className="flex gap-2.5 rounded-[10px] border border-danger/30 bg-[#fff5f5] px-4 py-3 text-[#a3262b] print:hidden">
               <AlertTriangle size={17} className="mt-px shrink-0" /> {error}

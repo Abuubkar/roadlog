@@ -24,7 +24,7 @@ export function LogGraph({ log }: { log: DailyLog }) {
   return (
     <div ref={ref} className="px-4 pt-3 pb-1">
       {width > 0 && (
-        <svg width="100%" height={TOP + LANE_H * 4 + 4} className="block" role="img" aria-label={`Duty status graph for ${log.date}`}>
+        <svg width="100%" viewBox={`0 0 ${width} ${TOP + LANE_H * 4 + 4}`} className="block" role="img" aria-label={`Duty status graph for ${log.date}`}>
           {Array.from({ length: 25 }, (_, h) => (
             <g key={h}>
               <text x={X(h)} y={12} textAnchor="middle" fontSize="10.5" fill="#7a869c">

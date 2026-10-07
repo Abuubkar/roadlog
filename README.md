@@ -31,12 +31,12 @@ Enter a trip and get the route, every legally required stop, and filled-out *Dri
 | --- | --- |
 | <img src="docs/images/daily-logs.png" alt="Daily log graph, events table, day totals, 70-hour recap and form-and-manner checklist" /> | <img src="docs/images/paper-log-sheet.png" alt="Generated FMCSA Drivers Daily Log paper form with duty status line, totals, remarks and recap" /> |
 
-*Sample trip: Chicago, IL → Indianapolis, IN (pickup) → Los Angeles, CA, with 20 h of cycle used. Open [`/?sample`](https://abuubkar.github.io/roadlog/?sample) to plan it live.*
+*Sample trip: Chicago, IL → Indianapolis, IN (pickup) → Los Angeles, CA, with 20 h of cycle used. The [live app](https://abuubkar.github.io/roadlog/) opens with this sample loaded. Change the inputs and click **Plan trip** to plan your own.*
 
 ## Features
 
 - **Trip inputs:** current, pickup and drop-off locations (with address autocomplete), plus current cycle hours used and departure time.
-- **Fleet-console UI:** sidebar navigation, a one-row trip bar, a KPI summary strip, and Overview / Route & stops / Daily logs / Directions tabs. The design follows fleet-compliance tools like Motive and Samsara.
+- **Fleet-console UI:** a sidebar for switching between Overview, Route & stops, Daily logs and Directions, plus a one-row trip bar and a KPI summary strip. It opens with a sample trip already loaded. The design follows fleet-compliance tools like Motive and Samsara.
 - **Route map:** the full route on a muted Esri basemap (with a satellite option), plus markers for pickup, drop-off, fuel stops, 30-minute breaks, 10-hour rests and 34-hour restarts.
 - **Live HOS clocks:** drag along the whole-trip duty-status timeline to move the truck on the map. The until-break, drive, shift and cycle clocks and the upcoming stops update as you go.
 - **HOS-compliant schedule:** enforces the 11-hour driving limit, the 14-hour window, the 30-minute break, the 70 h / 8-day cycle, fueling every 1,000 mi, and 1 h pickup/drop-off.
@@ -116,7 +116,7 @@ npm install
 npm run dev                     # http://localhost:5173
 ```
 
-Click **Load sample trip** to fill in Chicago → Indianapolis → Los Angeles, or open `/?sample` to plan it straight away.
+The app opens with a bundled sample trip (Chicago → Indianapolis → Los Angeles), so it shows data without calling the API. **New trip** clears it, and **Load sample trip** brings it back.
 
 ### Tests & linting
 

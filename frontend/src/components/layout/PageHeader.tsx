@@ -1,4 +1,4 @@
-import { Bell, ChevronRight, CircleHelp, FileText, Plus, Printer, RefreshCw, Search, Truck, User } from 'lucide-react'
+import { ChevronRight, FileText, FlaskConical, Plus, Printer, RefreshCw, Truck, User } from 'lucide-react'
 import dispatcherPhoto from '../../assets/avatars/dispatcher.jpg'
 import { Logo } from '../ui/Logo'
 import type { LogDetails, TripPlan } from '../../types/trip'
@@ -14,6 +14,7 @@ const TABS: { value: Tab; label: string }[] = [
 
 interface Props {
   plan: TripPlan | null
+  isSample: boolean
   plannedAt: Date | null
   details: LogDetails
   tab: Tab
@@ -21,7 +22,7 @@ interface Props {
   onNewTrip: () => void
 }
 
-export function PageHeader({ plan, plannedAt, details, tab, onTab, onNewTrip }: Props) {
+export function PageHeader({ plan, isSample, plannedAt, details, tab, onTab, onNewTrip }: Props) {
   const from = plan?.logs[0]?.from_location
   const to = plan?.logs.at(-1)?.to_location
   return (
@@ -38,18 +39,7 @@ export function PageHeader({ plan, plannedAt, details, tab, onTab, onNewTrip }: 
             </>
           )}
         </div>
-        <div className="ml-auto flex items-center gap-3.5">
-          <div className="hidden h-8 w-72 items-center gap-2 rounded-[7px] whitespace-nowrap border border-line bg-[#fafbfc] px-2.5 text-ink-3 xl:flex">
-            <Search size={15} /> Search trips, drivers, units
-            <kbd className="ml-auto rounded border border-line bg-white px-1.5 font-mono text-[11px]">⌘K</kbd>
-          </div>
-          <CircleHelp size={19} className="hidden text-ink-2 sm:block" />
-          <span className="relative hidden text-ink-2 sm:block">
-            <Bell size={19} />
-            <span className="absolute -top-px -right-px size-[7px] rounded-full bg-danger shadow-[0_0_0_2px_white]" />
-          </span>
-          <img src={dispatcherPhoto} alt="Signed-in dispatcher" className="size-[30px] rounded-full object-cover" />
-        </div>
+        <img src={dispatcherPhoto} alt="Signed-in dispatcher" className="ml-auto size-[30px] rounded-full object-cover" />
       </div>
 
       <div className="mt-1.5 mb-3 flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -57,6 +47,11 @@ export function PageHeader({ plan, plannedAt, details, tab, onTab, onNewTrip }: 
         {plan && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-ok-soft px-2.5 py-[3px] text-[11.5px] font-semibold text-ok-ink">
             <span className="size-1.5 rounded-full bg-ok" /> Compliant
+          </span>
+        )}
+        {plan && isSample && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-[3px] text-[11.5px] font-semibold text-brand-ink">
+            <FlaskConical size={12} /> Sample data
           </span>
         )}
         <div className="ml-auto flex gap-2">
@@ -96,7 +91,7 @@ export function PageHeader({ plan, plannedAt, details, tab, onTab, onNewTrip }: 
         </div>
       )}
 
-      <nav className="flex gap-6 overflow-x-auto">
+      <nav className="flex gap-6 overflow-x-auto lg:hidden">
         {TABS.map((t) => {
           const disabled = !plan && t.value !== 'overview'
           return (

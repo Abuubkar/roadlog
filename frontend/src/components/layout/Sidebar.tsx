@@ -1,24 +1,30 @@
-import { AlertTriangle, Bookmark, ChevronsUpDown, ClipboardCheck, Clock4, FileText, Route, Truck, UserRound } from 'lucide-react'
+import { FileText, LayoutDashboard, MapPinned, Signpost } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import driverPhoto from '../../assets/avatars/driver.jpg'
 import type { LogDetails } from '../../types/trip'
 import { Logo } from '../ui/Logo'
+import type { Tab } from './PageHeader'
 
-const NAV: { section: string; items: { icon: LucideIcon; label: string; active?: boolean; count?: 'violations' }[] }[] = [
-  { section: 'Planning', items: [{ icon: Route, label: 'Trip planner', active: true }, { icon: Bookmark, label: 'Saved trips' }] },
+const NAV: { section: string; items: { icon: LucideIcon; label: string; tab: Tab }[] }[] = [
   {
-    section: 'Compliance',
+    section: 'Trip',
     items: [
-      { icon: FileText, label: 'Daily logs' },
-      { icon: Clock4, label: 'HOS clocks' },
-      { icon: ClipboardCheck, label: 'Inspections' },
-      { icon: AlertTriangle, label: 'Violations', count: 'violations' },
+      { icon: LayoutDashboard, label: 'Overview', tab: 'overview' },
+      { icon: MapPinned, label: 'Route & stops', tab: 'route' },
     ],
   },
-  { section: 'Fleet', items: [{ icon: UserRound, label: 'Drivers' }, { icon: Truck, label: 'Vehicles' }] },
+  { section: 'Compliance', items: [{ icon: FileText, label: 'Daily logs', tab: 'logs' }] },
+  { section: 'Navigation', items: [{ icon: Signpost, label: 'Directions', tab: 'directions' }] },
 ]
 
-export function Sidebar({ details, violations }: { details: LogDetails; violations: number | null }) {
+interface Props {
+  details: LogDetails
+  tab: Tab
+  hasPlan: boolean
+  onTab: (tab: Tab) => void
+}
+
+export function Sidebar({ details, tab, hasPlan, onTab }: Props) {
   return (
     <aside className="sticky top-0 hidden h-screen flex-col bg-nav text-nav-text lg:flex print:hidden">
       <div className="flex items-center gap-2.5 px-[18px] pt-[18px] pb-3.5">
@@ -34,30 +40,30 @@ export function Sidebar({ details, violations }: { details: LogDetails; violatio
           <div className="truncate text-[12.5px] font-semibold">{details.carrier || 'Your carrier'}</div>
           <div className="truncate text-[11px] text-nav-text">{details.mainOffice || 'Main office'}</div>
         </div>
-        <ChevronsUpDown size={15} className="ml-auto shrink-0" />
       </div>
 
       <nav className="flex-1 overflow-y-auto">
         {NAV.map(({ section, items }) => (
           <div key={section}>
             <div className="px-[18px] pt-3.5 pb-1.5 text-[10.5px] font-semibold tracking-[0.08em] text-[#5d6a83] uppercase">{section}</div>
-            {items.map(({ icon: Icon, label, active, count }) => (
-              <a
-                key={label}
-                href={active ? '#' : undefined}
-                aria-current={active ? 'page' : undefined}
-                title={active ? undefined : 'Not included in this demo'}
-                className={`mx-2.5 my-px flex items-center gap-2.5 rounded-[7px] px-2.5 py-2 font-medium transition ${
-                  active ? 'bg-nav-active text-white' : 'cursor-default hover:bg-nav-2 hover:text-[#dfe5f0]'
-                }`}
-              >
-                <Icon size={17} className={active ? 'text-[#5ea2ff]' : ''} />
-                {label}
-                {count && violations !== null && (
-                  <span className="ml-auto rounded-full bg-[#22304d] px-[7px] py-px text-[11px] text-[#cfd8e8]">{violations}</span>
-                )}
-              </a>
-            ))}
+            {items.map(({ icon: Icon, label, tab: target }) => {
+              const active = tab === target
+              const disabled = !hasPlan && target !== 'overview'
+              return (
+                <button
+                  key={label}
+                  onClick={() => onTab(target)}
+                  disabled={disabled}
+                  aria-current={active ? 'page' : undefined}
+                  className={`mx-2.5 my-px flex w-[calc(100%-1.25rem)] items-center gap-2.5 rounded-[7px] px-2.5 py-2 text-left font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                    active ? 'bg-nav-active text-white' : 'hover:bg-nav-2 hover:text-[#dfe5f0]'
+                  }`}
+                >
+                  <Icon size={17} className={active ? 'text-[#5ea2ff]' : ''} />
+                  {label}
+                </button>
+              )
+            })}
           </div>
         ))}
       </nav>

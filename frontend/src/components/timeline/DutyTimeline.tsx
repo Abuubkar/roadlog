@@ -30,8 +30,8 @@ export function DutyTimeline({ plan, hour, onScrub }: Props) {
   const segments = [{ status: 'off_duty' as DutyStatus, a: start, b: 0 }, ...spans(plan), { status: 'off_duty' as DutyStatus, a: total, b: start + span }]
   const height = TOP + LANE_H * 4 + 28
 
-  const scrub = (clientX: number) => {
-    const rect = ref.current!.getBoundingClientRect()
+  const scrub = (clientX: number, el: HTMLElement) => {
+    const rect = el.getBoundingClientRect()
     onScrub(Math.max(0, Math.min(total, start + ((clientX - rect.left - LABEL_W) / w) * span)))
   }
 
@@ -59,9 +59,9 @@ export function DutyTimeline({ plan, hour, onScrub }: Props) {
         onPointerDown={(e) => {
           dragging.current = true
           e.currentTarget.setPointerCapture(e.pointerId)
-          scrub(e.clientX)
+          scrub(e.clientX, e.currentTarget)
         }}
-        onPointerMove={(e) => dragging.current && scrub(e.clientX)}
+        onPointerMove={(e) => dragging.current && scrub(e.clientX, e.currentTarget)}
         onPointerUp={() => (dragging.current = false)}
         role="slider"
         aria-label="Trip time"
@@ -75,7 +75,7 @@ export function DutyTimeline({ plan, hour, onScrub }: Props) {
         }}
       >
         {width > 0 && (
-          <svg width="100%" height={height} className="block overflow-visible">
+          <svg width="100%" viewBox={`0 0 ${width} ${height}`} className="block overflow-visible">
             {Array.from({ length: days + 1 }, (_, d) => {
               const x = X(start + d * 24)
               const date = new Date(t0.getTime() + (start + d * 24) * 36e5)
