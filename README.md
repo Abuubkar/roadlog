@@ -15,7 +15,7 @@ Enter a trip and get the route, every legally required stop, and filled-out *Dri
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59200.svg)](LICENSE)
 
-**[Live demo](https://abuubkar.github.io/roadlog/)** · [API docs](docs/api.md) · [HOS model](docs/hos-rules.md) · [Architecture](docs/architecture.md)
+**[Live demo](https://abuubkar.github.io/roadlog/)** · [Live API](https://abubakarrkhawaj.pythonanywhere.com/api/health/) · [API docs](docs/api.md) · [HOS model](docs/hos-rules.md) · [Architecture](docs/architecture.md)
 
 </div>
 
