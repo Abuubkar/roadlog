@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="frontend/public/favicon.svg" width="72" alt="RoadLog logo" />
+<img src="frontend/public/favicon.svg" width="64" alt="RoadLog logo" />
 
 # RoadLog
 
@@ -17,9 +17,21 @@ Enter a trip and get the route, every legally required stop, and filled-out *Dri
 
 **[Live demo](https://abuubkar.github.io/roadlog/)** · [Live API](https://abubakarrkhawaj.pythonanywhere.com/api/health/) · [API docs](docs/api.md) · [HOS model](docs/hos-rules.md) · [Architecture](docs/architecture.md)
 
+<br />
+
+<img src="docs/images/overview.png" alt="RoadLog trip overview: trip bar, KPI strip, route map, HOS clocks and duty status timeline" width="100%" />
+
 </div>
 
 ---
+
+## Screenshots
+
+| Daily logs (ELD view) | Paper log sheet (printable) |
+| --- | --- |
+| <img src="docs/images/daily-logs.png" alt="Daily log graph, events table, day totals, 70-hour recap and form-and-manner checklist" /> | <img src="docs/images/paper-log-sheet.png" alt="Generated FMCSA Drivers Daily Log paper form with duty status line, totals, remarks and recap" /> |
+
+*Sample trip: Chicago, IL → Indianapolis, IN (pickup) → Los Angeles, CA, with 20 h of cycle used. Open [`/?sample`](https://abuubkar.github.io/roadlog/?sample) to plan it live.*
 
 ## Features
 
@@ -77,6 +89,7 @@ roadlog/
 │       ├── hooks/ · lib/ · types/
 ├── docs/
 │   ├── assessment/              original brief, FMCSA guide, video transcript
+│   ├── images/                  README screenshots
 │   ├── api.md · architecture.md · hos-rules.md · deployment.md
 └── .github/workflows/           CI + GitHub Pages deploy
 ```
