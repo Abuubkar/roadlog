@@ -4,6 +4,7 @@ import type { TripPlan, TripRequest } from '../types/trip'
 
 export function useTripPlan() {
   const [plan, setPlan] = useState<TripPlan | null>(null)
+  const [plannedAt, setPlannedAt] = useState<Date | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const inFlight = useRef<AbortController | null>(null)
@@ -16,6 +17,7 @@ export function useTripPlan() {
     setError(null)
     try {
       setPlan(await planTrip(request, controller.signal))
+      setPlannedAt(new Date())
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setError((e as Error).message)
     } finally {
@@ -23,5 +25,13 @@ export function useTripPlan() {
     }
   }, [])
 
-  return { plan, loading, error, submit }
+  const reset = useCallback(() => {
+    inFlight.current?.abort()
+    setPlan(null)
+    setPlannedAt(null)
+    setError(null)
+    setLoading(false)
+  }, [])
+
+  return { plan, plannedAt, loading, error, submit, reset }
 }

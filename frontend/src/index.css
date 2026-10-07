@@ -1,78 +1,85 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  --color-ink-50: #f5f7fa;
-  --color-ink-100: #e9edf3;
-  --color-ink-200: #d3dae5;
-  --color-ink-300: #aab6c8;
-  --color-ink-400: #7a8aa3;
-  --color-ink-500: #566781;
-  --color-ink-600: #3f4e66;
-  --color-ink-700: #2d3a50;
-  --color-ink-800: #1c2638;
-  --color-ink-900: #111827;
-  --color-ink-950: #0a0f1a;
+  --color-nav: #0b1220;
+  --color-nav-2: #131c2e;
+  --color-nav-active: #1d2a44;
+  --color-nav-line: #1e2a40;
+  --color-nav-text: #9aa6bd;
 
-  --color-brand-50: #fff8eb;
-  --color-brand-100: #ffecc6;
-  --color-brand-300: #ffc45c;
-  --color-brand-400: #ffb02e;
-  --color-brand-500: #f59200;
-  --color-brand-600: #d97100;
-  --color-brand-700: #b45309;
+  --color-canvas: #f4f6f9;
+  --color-line: #e3e7ee;
+  --color-line-soft: #eef1f5;
+  --color-ink: #0f1a2e;
+  --color-ink-2: #44526b;
+  --color-ink-3: #7a869c;
 
-  --color-paper: #fdfcf8;
-  --color-pen: #1e40af;
+  --color-brand: #0c66e4;
+  --color-brand-hover: #0a58c7;
+  --color-brand-soft: #e9f2ff;
+  --color-brand-ink: #0b4fb3;
 
-  --color-off-duty: #64748b;
-  --color-sleeper: #6366f1;
-  --color-driving: #10b981;
-  --color-on-duty: #f59e0b;
-  --color-pickup: #0ea5e9;
-  --color-dropoff: #e11d48;
-  --color-fuel: #8b5cf6;
-  --color-restart: #0f766e;
+  --color-ok: #1f9d55;
+  --color-ok-soft: #e3f6ea;
+  --color-ok-ink: #13693a;
+  --color-warn: #cf7a00;
+  --color-danger: #e5484d;
+
+  --color-off-duty: #8590a2;
+  --color-sleeper: #44546f;
+  --color-driving: #1f9d55;
+  --color-on-duty: #1d7afc;
 }
 
 @layer base {
   html {
-    @apply bg-ink-50 text-ink-800 antialiased;
-    font-feature-settings: 'cv11', 'ss01';
+    @apply bg-canvas text-[13px] text-ink antialiased;
   }
   ::selection {
-    @apply bg-brand-300/60;
+    @apply bg-brand-soft;
   }
 }
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-ink-200/70 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_24px_-12px_rgba(16,24,40,0.12)];
+    @apply min-w-0 rounded-[10px] border border-line bg-white;
   }
-  .field-label {
-    @apply mb-1.5 block text-xs font-semibold tracking-wide text-ink-500 uppercase;
+  .card-header {
+    @apply flex flex-wrap items-center gap-x-2.5 gap-y-1 border-b border-line-soft px-4 py-3;
   }
-  .input {
-    @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 shadow-xs transition outline-none placeholder:text-ink-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15;
+  .card-title {
+    @apply text-sm font-semibold text-ink;
   }
-  .section-title {
-    @apply text-lg font-semibold tracking-tight text-ink-900;
+  .card-sub {
+    @apply text-xs text-ink-3;
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold tracking-[0.05em] text-ink-3 uppercase;
+  }
+  .field {
+    @apply flex h-9 items-center gap-2 rounded-[7px] border border-line bg-[#fbfcfd] px-2.5 transition focus-within:border-brand focus-within:bg-white focus-within:ring-3 focus-within:ring-brand/12;
+  }
+  .field input {
+    @apply w-full bg-transparent text-[13px] font-medium text-ink outline-none placeholder:font-normal placeholder:text-ink-3;
+  }
+  .btn {
+    @apply inline-flex h-[34px] items-center gap-1.5 rounded-[7px] border border-line bg-white px-3 text-[13px] font-medium text-ink transition hover:bg-[#f6f8fb] disabled:cursor-wait disabled:opacity-70;
+  }
+  .btn-primary {
+    @apply border-brand bg-brand text-white hover:bg-brand-hover;
   }
 }
 
-/* Leaflet polish */
 .leaflet-container {
   font-family: var(--font-sans);
-  background: #eef1f5;
+  background: #eef0f3;
 }
 .leaflet-popup-content-wrapper {
-  border-radius: 14px;
-  box-shadow: 0 12px 32px -12px rgba(16, 24, 40, 0.35);
-}
-.leaflet-popup-content {
-  margin: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -10px rgba(15, 26, 46, 0.35);
 }
 
 @media print {
@@ -83,12 +90,7 @@
   body {
     background: white !important;
   }
-  .no-print {
-    display: none !important;
-  }
   .print-sheet {
     break-after: page;
-    box-shadow: none !important;
-    border: none !important;
   }
 }

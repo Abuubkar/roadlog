@@ -24,9 +24,11 @@ Enter a trip and get the route, every legally required stop, and filled-out *Dri
 ## Features
 
 - **Trip inputs:** current, pickup and drop-off locations (with address autocomplete), plus current cycle hours used and departure time.
-- **Route map:** the full route on OpenStreetMap, with markers for pickup, drop-off, fuel stops, 30-minute breaks, 10-hour rests and 34-hour restarts.
+- **Fleet-console UI:** sidebar navigation, a one-row trip bar, a KPI summary strip, and Overview / Route & stops / Daily logs / Directions tabs. The design follows fleet-compliance tools like Motive and Samsara.
+- **Route map:** the full route on a muted Esri basemap (with a satellite option), plus markers for pickup, drop-off, fuel stops, 30-minute breaks, 10-hour rests and 34-hour restarts.
+- **Live HOS clocks:** drag along the whole-trip duty-status timeline to move the truck on the map. The until-break, drive, shift and cycle clocks and the upcoming stops update as you go.
 - **HOS-compliant schedule:** enforces the 11-hour driving limit, the 14-hour window, the 30-minute break, the 70 h / 8-day cycle, fueling every 1,000 mi, and 1 h pickup/drop-off.
-- **Daily log sheets:** one sheet per calendar day, drawn as SVG to match the paper FMCSA log. Each has the duty-status grid line, hour totals that sum to 24, remarks with the city and state at every status change, and the 70-hour recap.
+- **Daily logs:** one per calendar day. Each has an ELD-style graph, an events table, day totals, the 70-hour recap and a form-and-manner checklist. A **Paper form** toggle draws the FMCSA paper log sheet, with the grid line, totals that sum to 24, remarks and the recap.
 - **Itinerary & directions:** a day-by-day timeline and turn-by-turn instructions for each leg.
 - **Print-ready:** print every sheet, or save them as a PDF, one landscape page per day.
 
@@ -63,12 +65,15 @@ roadlog/
 │   └── src/
 │       ├── api/                 HTTP client
 │       ├── components/
-│       │   ├── trip-form/       inputs & autocomplete
+│       │   ├── layout/          sidebar, page header & tabs
+│       │   ├── trip-form/       trip bar & address autocomplete
+│       │   ├── summary/         KPI strip
 │       │   ├── map/             Leaflet route map
-│       │   ├── itinerary/       timeline & directions
-│       │   ├── logs/            SVG daily log sheets
-│       │   ├── summary/         trip stats
-│       │   ├── layout/ · ui/
+│       │   ├── hos/             HOS clocks & upcoming stops
+│       │   ├── timeline/        whole-trip duty status scrubber
+│       │   ├── logs/            log graph, events, paper form
+│       │   ├── itinerary/       stops table & directions
+│       │   └── ui/              shared primitives
 │       ├── hooks/ · lib/ · types/
 ├── docs/
 │   ├── assessment/              original brief, FMCSA guide, video transcript
@@ -98,7 +103,7 @@ npm install
 npm run dev                     # http://localhost:5173
 ```
 
-Click **Sample trip** to load Chicago → Indianapolis → Los Angeles.
+Click **Load sample trip** to fill in Chicago → Indianapolis → Los Angeles, or open `/?sample` to plan it straight away.
 
 ### Tests & linting
 

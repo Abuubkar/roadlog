@@ -11,10 +11,10 @@ interface Props {
   value: LocationValue
   onChange: (value: LocationValue) => void
   icon: LucideIcon
-  accent: string
+  color: string
 }
 
-export function LocationInput({ label, placeholder, value, onChange, icon: Icon, accent }: Props) {
+export function LocationInput({ label, placeholder, value, onChange, icon: Icon, color }: Props) {
   const id = useId()
   const [open, setOpen] = useState(false)
   const [found, setFound] = useState<{ query: string; places: Place[] }>({ query: '', places: [] })
@@ -53,17 +53,14 @@ export function LocationInput({ label, placeholder, value, onChange, icon: Icon,
   const showList = open && results.length > 0
 
   return (
-    <div className="relative">
-      <label htmlFor={id} className="field-label">
+    <div className="relative min-w-0">
+      <label htmlFor={id} className="eyebrow mb-[5px] block">
         {label}
       </label>
-      <div className="relative">
-        <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center" style={{ color: accent }}>
-          <Icon size={17} strokeWidth={2.25} />
-        </span>
+      <div className="field">
+        <Icon size={16} style={{ color }} className="shrink-0" />
         <input
           id={id}
-          className="input pr-9 pl-10"
           placeholder={placeholder}
           value={value.text}
           autoComplete="off"
@@ -80,31 +77,25 @@ export function LocationInput({ label, placeholder, value, onChange, icon: Icon,
           onKeyDown={onKeyDown}
           required
         />
-        <span className="absolute inset-y-0 right-3 flex items-center text-ink-400">
-          {loading ? (
-            <Loader2 size={15} className="animate-spin" />
-          ) : value.place ? (
-            <span className="size-2 rounded-full bg-emerald-500" title="Location confirmed" />
-          ) : null}
-        </span>
+        {loading && <Loader2 size={14} className="shrink-0 animate-spin text-ink-3" />}
       </div>
       {showList && (
         <ul
           id={`${id}-list`}
           role="listbox"
-          className="absolute z-[1000] mt-1.5 w-full overflow-hidden rounded-xl border border-ink-200 bg-white py-1 shadow-xl shadow-ink-900/10"
+          className="absolute z-[1200] mt-1 w-full min-w-64 overflow-hidden rounded-lg border border-line bg-white py-1 shadow-[0_12px_32px_-12px_rgba(15,26,46,.35)]"
           onMouseDown={() => clearTimeout(blurTimer.current)}
         >
           {results.map((place, i) => (
             <li key={`${place.label}-${i}`} role="option" aria-selected={i === active}>
               <button
                 type="button"
-                className={`flex w-full items-start gap-2.5 px-3 py-2 text-left text-sm ${i === active ? 'bg-ink-50' : ''}`}
+                className={`flex w-full items-start gap-2 px-3 py-2 text-left ${i === active ? 'bg-canvas' : ''}`}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => choose(place)}
               >
-                <MapPin size={15} className="mt-0.5 shrink-0 text-ink-400" />
-                <span className="text-ink-700">{place.label}</span>
+                <MapPin size={14} className="mt-0.5 shrink-0 text-ink-3" />
+                <span className="text-ink-2">{place.label}</span>
               </button>
             </li>
           ))}

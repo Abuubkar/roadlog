@@ -49,8 +49,13 @@ The API is stateless and has no database.
 | Path | Responsibility |
 | --- | --- |
 | `src/api/client.ts` | API and autocomplete calls |
-| `src/components/trip-form` | Inputs, autocomplete, optional log-sheet header details |
-| `src/components/map` | Leaflet route and stop markers |
-| `src/components/itinerary` | Day-by-day timeline and turn-by-turn directions |
-| `src/components/logs` | SVG *Drivers Daily Log* renderer, day switcher, print |
+| `src/components/layout` | Sidebar, page header, tabs |
+| `src/components/trip-form` | Trip bar, address autocomplete, log-sheet header details |
+| `src/components/summary` | KPI strip |
+| `src/components/map` | Leaflet route, stop markers, truck at the playhead |
+| `src/components/hos` | HOS clocks, current status, upcoming stops |
+| `src/components/timeline` | Whole-trip duty-status graph with a draggable playhead |
+| `src/components/logs` | Daily log graph, events table, recap, and the SVG paper *Drivers Daily Log* |
+| `src/components/itinerary` | Stops table and turn-by-turn directions |
+| `src/lib/hos.ts` | Client-side HOS replay that drives the clocks at any moment of the trip |
 | `src/types/trip.ts` | API contract types |

@@ -1,77 +1,108 @@
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { Itinerary } from './components/itinerary/Itinerary'
-import { Footer } from './components/layout/Footer'
-import { Header } from './components/layout/Header'
-import { LogBook } from './components/logs/LogBook'
+import { useMemo, useState } from 'react'
+import { Directions } from './components/itinerary/Directions'
+import { StopsTable } from './components/itinerary/StopsTable'
+import { HosPanel } from './components/hos/HosPanel'
+import { PageHeader, type Tab } from './components/layout/PageHeader'
+import { Sidebar } from './components/layout/Sidebar'
+import { DailyLogs } from './components/logs/DailyLogs'
+import { DailyLogSheet } from './components/logs/DailyLogSheet'
 import { RouteMap } from './components/map/RouteMap'
-import { TripSummary } from './components/summary/TripSummary'
-import { TripForm } from './components/trip-form/TripForm'
-import { EmptyState } from './components/ui/EmptyState'
+import { SummaryStrip } from './components/summary/SummaryStrip'
+import { DutyTimeline } from './components/timeline/DutyTimeline'
+import { TripBar } from './components/trip-form/TripBar'
+import { EmptyPanel } from './components/ui/EmptyPanel'
 import { useStoredState } from './hooks/useStoredState'
 import { useTripPlan } from './hooks/useTripPlan'
-import type { LogDetails } from './types/trip'
+import { hosAt, hoursFrom, routeLocator } from './lib/hos'
+import type { LogDetails, TripPlan } from './types/trip'
 
-const EMPTY_DETAILS: LogDetails = {
-  driverName: '',
+const DEFAULT_DETAILS: LogDetails = {
+  driverName: 'Daniel Brooks',
   coDriver: '',
-  carrier: '',
-  mainOffice: '',
-  homeTerminal: '',
-  vehicles: '',
-  shippingDoc: '',
-  shipperCommodity: '',
+  carrier: 'Northline Freight',
+  mainOffice: 'Columbus, OH',
+  homeTerminal: 'Columbus, OH',
+  vehicles: 'Unit 1016 / Trailer 53-2207',
+  shippingDoc: 'BOL 448210',
+  shipperCommodity: 'Midwest Paper Co. · paper products',
+}
+
+/** Start the playhead an hour before the first fuel stop (or a third of the way in). */
+const initialHour = (plan: TripPlan) => {
+  const fuel = plan.stops.find((s) => s.type === 'fuel')
+  return fuel ? Math.max(0, hoursFrom(plan, fuel.arrival) - 1.2) : plan.summary.total_hours / 3
 }
 
 export default function App() {
-  const { plan, loading, error, submit } = useTripPlan()
-  const [details, setDetails] = useStoredState('roadlog:log-details', EMPTY_DETAILS)
+  const { plan, plannedAt, loading, error, submit, reset } = useTripPlan()
+  const [details, setDetails] = useStoredState('roadlog:log-details', DEFAULT_DETAILS)
+  const [tab, setTab] = useState<Tab>('overview')
+  const [scrub, setScrub] = useState<{ plan: TripPlan; hour: number } | null>(null)
+
+  const hour = plan ? (scrub?.plan === plan ? scrub.hour : initialHour(plan)) : 0
+  const locate = useMemo(() => (plan ? routeLocator(plan.route.geometry, plan.summary.total_miles) : null), [plan])
+  const snapshot = plan ? hosAt(plan, hour) : null
+  const truck = snapshot && locate ? locate(snapshot.mile) : null
+  const onScrub = (h: number) => plan && setScrub({ plan, hour: h })
+
+  const newTrip = () => {
+    reset()
+    setTab('overview')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-6 sm:px-6">
-        <div className="no-print grid gap-6 lg:grid-cols-[420px_1fr]">
-          <div className="flex flex-col gap-4">
-            <TripForm loading={loading} onSubmit={submit} details={details} onDetailsChange={setDetails} />
-            {error && (
-              <div role="alert" className="flex gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-                <AlertTriangle size={18} className="mt-0.5 shrink-0" />
-                {error}
-              </div>
-            )}
-          </div>
-          <div className="card relative min-h-[420px] overflow-hidden lg:min-h-0">
-            <RouteMap plan={plan} />
-            {loading && (
-              <div className="absolute inset-0 z-[500] grid place-items-center bg-white/60 backdrop-blur-[2px]">
-                <div className="flex items-center gap-3 rounded-2xl bg-ink-900 px-5 py-3 text-sm font-medium text-white shadow-xl">
-                  <Loader2 size={18} className="animate-spin text-brand-400" />
-                  Routing &amp; simulating hours of service…
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+      <Sidebar details={details} violations={plan ? 0 : null} />
+      <div className="min-w-0">
+        <PageHeader plan={plan} plannedAt={plannedAt} details={details} tab={plan ? tab : 'overview'} onTab={setTab} onNewTrip={newTrip} />
+        <main className="flex flex-col gap-4 px-4 pt-5 pb-10 sm:px-7 print:p-0">
+          <TripBar loading={loading} onSubmit={(r) => submit(r).then(() => setTab('overview'))} details={details} onDetailsChange={setDetails} />
+          {error && (
+            <div role="alert" className="flex gap-2.5 rounded-[10px] border border-danger/30 bg-[#fff5f5] px-4 py-3 text-[#a3262b] print:hidden">
+              <AlertTriangle size={17} className="mt-px shrink-0" /> {error}
+            </div>
+          )}
 
-        {plan ? (
-          <>
-            <div className="no-print">
-              <TripSummary plan={plan} />
-            </div>
-            <div className="grid gap-6 xl:grid-cols-[400px_1fr]">
-              <div className="no-print">
-                <Itinerary plan={plan} />
+          {plan && <SummaryStrip plan={plan} />}
+
+          {(!plan || tab === 'overview' || tab === 'route') && (
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] print:hidden">
+              <div className="relative flex">
+                <RouteMap plan={plan} truck={truck} className="flex-1" />
+                {loading && (
+                  <div className="absolute inset-0 z-[600] grid place-items-center rounded-[10px] bg-white/60">
+                    <div className="flex items-center gap-2.5 rounded-lg bg-ink px-4 py-2.5 font-medium text-white shadow-lg">
+                      <Loader2 size={16} className="animate-spin" /> Routing and simulating hours of service…
+                    </div>
+                  </div>
+                )}
               </div>
-              <LogBook key={`${plan.summary.start}|${plan.summary.end}|${plan.route.distance_miles}`} logs={plan.logs} details={details} />
+              {plan && snapshot ? <HosPanel plan={plan} hour={hour} snapshot={snapshot} /> : <EmptyPanel />}
             </div>
-          </>
-        ) : (
-          <div className="no-print">
-            <EmptyState />
-          </div>
-        )}
-      </main>
-      <Footer />
+          )}
+
+          {plan && (tab === 'overview' || tab === 'route') && <DutyTimeline plan={plan} hour={hour} onScrub={onScrub} />}
+          {plan && tab === 'route' && <StopsTable plan={plan} />}
+          {plan && (tab === 'overview' || tab === 'logs') && <DailyLogs key={plannedAt?.getTime()} plan={plan} details={details} />}
+          {plan && tab === 'directions' && <Directions plan={plan} />}
+
+          {plan && (
+            <div className="hidden print:block">
+              {plan.logs.map((log) => (
+                <div key={log.date} className="print-sheet">
+                  <DailyLogSheet log={log} details={details} />
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+        <footer className="px-4 pb-8 text-xs text-ink-3 sm:px-7 print:hidden">
+          Planning aid only; follow your carrier’s policies and current FMCSA rules. Routing by OSRM · basemap by Esri · places by GeoNames · portraits
+          from randomuser.me.
+        </footer>
+      </div>
     </div>
   )
 }
