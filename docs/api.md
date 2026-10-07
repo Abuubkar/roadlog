@@ -22,7 +22,7 @@ Base URL: `VITE_API_URL` (locally `http://localhost:8000`).
 | `*_location` | string or `{label, lat, lon}` | Free text is geocoded server-side |
 | `current_cycle_used` | number, 0–70 | On-duty hours already used in the current 8-day cycle |
 | `start_time` | ISO datetime (optional) | Home-terminal time. Defaults to the current hour |
-| `include_inspections` | boolean (optional, default `true`) | 15 min pre-trip and post-trip inspections |
+| `include_inspections` | boolean (optional, default `true`) | 30 min pre-trip (each shift) and 15 min post-trip inspections |
 
 ### Response `200`
 

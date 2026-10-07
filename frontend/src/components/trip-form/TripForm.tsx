@@ -123,7 +123,7 @@ export function TripForm({ loading, onSubmit, details, onDetailsChange }: Props)
         </div>
         <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-ink-200 px-3 py-2.5 text-sm text-ink-700 select-none">
           <input type="checkbox" checked={inspections} onChange={(e) => setInspections(e.target.checked)} className="size-4 accent-brand-500" />
-          15-min inspections
+          Pre / post-trip inspections
         </label>
       </div>
 

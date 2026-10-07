@@ -13,7 +13,7 @@ Rules modelled
 * 70-hour / 8-day on-duty cycle; a 34-hour off-duty restart resets it.
 * Fuel at least every 1,000 miles (30 min on duty, not driving).
 * 1 hour on duty for pickup and for drop-off.
-* Optional 15-minute pre-trip (each shift) and post-trip inspections.
+* Optional 30-minute pre-trip (each shift) and 15-minute post-trip inspections.
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ class HOSRules:
     fuel_min: float = 30
     pickup_min: float = 60
     dropoff_min: float = 60
-    pre_trip_min: float = 15
+    pre_trip_min: float = 30
     post_trip_min: float = 15
     include_inspections: bool = True
 
@@ -188,19 +188,22 @@ class HOSPlanner:
         c = self._clock
         if c.shift_start is not None:
             return
-        if c.cycle_used >= self.rules.cycle_limit_min - EPS:
+        pre_trip = self.rules.pre_trip_min if self.rules.include_inspections else 0.0
+        # Restart first if the cycle can't fit the pre-trip plus at least some driving.
+        if c.cycle_used + pre_trip >= self.rules.cycle_limit_min - EPS:
             self._off_duty(ActivityKind.RESTART, self.rules.restart_min)
         c.shift_start = c.now
         c.shift_driving = 0.0
-        if self.rules.include_inspections:
-            self._on_duty(ActivityKind.PRE_TRIP, self.rules.pre_trip_min)
+        if pre_trip:
+            self._record(ActivityKind.PRE_TRIP, DutyStatus.ON_DUTY, pre_trip)
 
     def _on_duty(self, kind: ActivityKind, minutes: float) -> None:
         c = self._clock
-        if c.cycle_used + minutes > self.rules.cycle_limit_min + EPS:
+        opening_shift = c.shift_start is None and self.rules.include_inspections
+        needed = minutes + (self.rules.pre_trip_min if opening_shift else 0.0)
+        if c.cycle_used + needed > self.rules.cycle_limit_min + EPS:
             self._off_duty(ActivityKind.RESTART, self.rules.restart_min)
-        if kind != ActivityKind.PRE_TRIP:
-            self._ensure_shift()
+        self._ensure_shift()
         self._record(kind, DutyStatus.ON_DUTY, minutes)
         if kind == ActivityKind.FUEL:
             c.miles_since_fuel = 0.0

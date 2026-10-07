@@ -131,7 +131,7 @@ class HOSPlannerTests(SimpleTestCase):
     def test_many_trips_are_compliant(self):
         for to_pickup in (0, 120, 640):
             for to_dropoff in (30, 800, 1900, 3100):
-                for cycle in (0, 33.5, 62, 69.75):
+                for cycle in (0, 33.5, 62, 69, 69.5, 69.75):
                     with self.subTest(to_pickup=to_pickup, to_dropoff=to_dropoff, cycle=cycle):
                         assert_compliant(self, plan(to_pickup, to_dropoff, cycle), cycle)
 

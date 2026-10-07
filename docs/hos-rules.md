@@ -12,7 +12,7 @@ RoadLog simulates a **property-carrying** driver under FMCSA 49 CFR Part 395, **
 | Cycle | 70 h on duty in 8 days | Takes a **34 h restart** before the cycle would be exceeded |
 | Fuel | At least every 1,000 mi | **30 min on-duty** fuel stop |
 | Pickup / drop-off | 1 h each | On duty, not driving |
-| Inspections | 15 min pre-trip each shift, 15 min post-trip | On duty, not driving. Can be turned off in the form |
+| Inspections | 30 min pre-trip + trailer check each shift, 15 min post-trip | On duty, not driving. Matches the reference video. Can be turned off in the form |
 
 If a break is due but less than 30 minutes of the 14-hour window is left, the planner takes the 10-hour rest instead. A break there would leave no time to drive.
 

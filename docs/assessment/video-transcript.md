@@ -15,7 +15,7 @@
 | Remark at every duty-status change: city, state and activity | Remark with nearest city/state and the activity label |
 | 45° flag mark into the remarks area | Slanted remark labels |
 | "Bracket" under periods when the truck didn't move | Bracket drawn under grouped stationary changes |
-| Pre-trip + TIV inspection at start of day, post-trip at end | 15-min pre-/post-trip inspections (toggleable) |
+| Pre-trip + TIV inspection at start of day, post-trip at end | 30-min pre-trip, 15-min post-trip inspections (toggleable) |
 | 30-minute break logged off duty | 30-min off-duty break |
 | Total driving miles and total truck miles in the header | Both boxes filled per day |
 | Line totals must add to 24 h | Totals column with `= 24` check |
